@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class HomeController {
 
     @Operation(summary = "API 서버 시작페이지", description = "API 서버 시작페이지입니다.")
-    @GetMapping("/")
+    @GetMapping(value = "/", produces = "text/plain;charset=UTF-8")
     @ResponseBody
     public String home() {
         return "API 서버";
