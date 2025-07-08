@@ -8,6 +8,8 @@ import com.example.springdoc.domain.post.post.service.PostService;
 import com.example.springdoc.global.Rq;
 import com.example.springdoc.global.dto.RsData;
 import com.example.springdoc.global.exception.ServiceException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "ApiPostController" ,description = "글 API")
 @RestController
 @RequestMapping("/api/v1/posts")
 @RequiredArgsConstructor
@@ -22,6 +25,7 @@ public class ApiV1PostController {
 
     record StatisticsResBody(long postCount, long postPublishedCount, long postListedCount) { }
 
+    @Operation(summary = "통계 조회")
     @GetMapping("/statistics")
     public RsData<StatisticsResBody> getStatistics() {
 
@@ -38,6 +42,10 @@ public class ApiV1PostController {
     private final PostService postService;
     private final Rq rq;
 
+    @Operation(
+            summary = "글 목록 조회",
+            description = "페이징 처리와 검색 기능"
+    )
     @GetMapping
     @Transactional(readOnly = true)
     public RsData<PageDto> getItems(@RequestParam(defaultValue = "1") int page,
@@ -55,6 +63,10 @@ public class ApiV1PostController {
     }
 
 
+    @Operation(
+            summary = "내 글 목록 조회",
+            description = "페이징 처리와 검색 기능"
+    )
     @GetMapping("/mine")
     @Transactional(readOnly = true)
     public RsData<PageDto> getMines(
@@ -73,7 +85,10 @@ public class ApiV1PostController {
         );
 
     }
-
+    @Operation(
+            summary = "글 단건 조회",
+            description = "비밀글은 작성자만 조회 가능"
+    )
     @GetMapping("{id}")
     @Transactional(readOnly = true)
     public RsData<PostWithContentDto> getItem(@PathVariable long id) {
@@ -99,7 +114,10 @@ public class ApiV1PostController {
                         boolean published,
                         boolean listed) {
     }
-
+    @Operation(
+            summary = "글 작성",
+            description = "로그인 한 사용자만 글 작성 가능"
+    )
     @PostMapping
     @Transactional
     public RsData<PostWithContentDto> write(@RequestBody @Valid WriteReqBody reqBody) {
@@ -118,6 +136,10 @@ public class ApiV1PostController {
     record ModifyReqBody(@NotBlank String title, @NotBlank String content) {
     }
 
+    @Operation(
+            summary = "글 수정",
+            description = "작성자와 관리지만 글 수정 가능"
+    )
     @PutMapping("{id}")
     @Transactional
     public RsData<PostWithContentDto> modify(@PathVariable long id, @RequestBody @Valid ModifyReqBody reqBody) {
@@ -137,7 +159,10 @@ public class ApiV1PostController {
                 new PostWithContentDto(post)
         );
     }
-
+    @Operation(
+            summary = "글 삭제",
+            description = "작성자와 관리지만 글 삭제 가능"
+    )
     @DeleteMapping("{id}")
     public RsData<Void> delete(@PathVariable long id) {
 
