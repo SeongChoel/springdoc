@@ -28,10 +28,14 @@ public class SecurityConfig {
                                 .permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/*/posts/{id:\\d+}", "/api/*/posts", "/api/*/posts/{postId:\\d+}/comments")
                                 .permitAll()
-                                .requestMatchers("/api/*/members/login", "/api/*/members/join","/api/*/members/logout")
+                                .requestMatchers("/api/*/members/login", "/api/*/members/join", "/api/*/members/logout")
                                 .permitAll()
                                 .requestMatchers("/api/v1/posts/statistics")
                                 .hasRole("ADMIN")
+                                .requestMatchers("/swagger-ui/**")
+                                .permitAll()
+                                .requestMatchers("/v3/api-docs/**")
+                                .permitAll()
                                 .anyRequest()
                                 .authenticated()
                 )
@@ -42,7 +46,6 @@ public class SecurityConfig {
                 .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(
                         exceptionHandling -> exceptionHandling
-                                //인증 실패 처리
                                 .authenticationEntryPoint(
                                         (request, response, authException) -> {
                                             response.setContentType("application/json;charset=UTF-8");
@@ -54,9 +57,8 @@ public class SecurityConfig {
                                             );
                                         }
                                 )
-                                //인가 실패 처리
                                 .accessDeniedHandler(
-                                        (request, response, accessDeniedException) -> {
+                                        (request, response, authException) -> {
                                             response.setContentType("application/json;charset=UTF-8");
                                             response.setStatus(403);
                                             response.getWriter().write(
@@ -66,7 +68,9 @@ public class SecurityConfig {
                                             );
                                         }
                                 )
+
                 );
+        ;
         return http.build();
     }
 }

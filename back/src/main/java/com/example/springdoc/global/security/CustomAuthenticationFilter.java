@@ -57,7 +57,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String accessToken = rq.getValueFromCookie("accessToken");
-        String apiKey = rq.getValueFromCookie("apiKey");
+        String apiKey = rq.getValueFromCookie("apikey");
 
         if (accessToken == null || apiKey == null) {
             return null;
@@ -93,7 +93,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
         String url = request.getRequestURI();
 
-        if(List.of("/api/v1/members/login","/api/v1/members/join","/api/*/members/join")
+        if(List.of("/api/v1/members/login","/api/v1/members/join","/api/*/members/logout")
                 .contains(url)) {
             filterChain.doFilter(request, response);
             return;
