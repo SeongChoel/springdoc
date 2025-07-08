@@ -6,12 +6,15 @@ import com.example.springdoc.domain.member.member.service.MemberService;
 import com.example.springdoc.global.Rq;
 import com.example.springdoc.global.dto.RsData;
 import com.example.springdoc.global.exception.ServiceException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "ApiV1MemberController", description = "회원 관련 API")
 @RestController
 @RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
@@ -22,7 +25,8 @@ public class ApiV1MemberController {
 
     record JoinReqBody(@NotBlank String username, @NotBlank String password, @NotBlank String nickname) {}
 
-    @PostMapping("/join")
+    @Operation(summary = "회원 가입")
+    @PostMapping(value = "/join", produces = "application/json;charset=UTF-8")
     public RsData<MemberDto> join(@RequestBody @Valid JoinReqBody reqBody) {
 
         memberService.findByUsername(reqBody.username())
@@ -44,6 +48,7 @@ public class ApiV1MemberController {
 
     record LoginResBody(MemberDto item, String apiKey, String accessToken) {}
 
+    @Operation(summary = "로그인", description = "로그인 성공 시 APIkey와 accessToken 반환 , 쿠키로도 반환")
     @PostMapping("/login")
     public RsData<LoginResBody> login(@RequestBody @Valid LoginReqBody reqBody,
                                       HttpServletResponse response) {
@@ -70,8 +75,12 @@ public class ApiV1MemberController {
                         accessToken
                 )
         );
+
+
+
     }
 
+    @Operation(summary = "로그아웃", description = "로그아웃 시 쿠키 삭제")
     @DeleteMapping("/logout")
     public RsData<Void> logout() {
 
@@ -82,6 +91,8 @@ public class ApiV1MemberController {
         return new RsData<>("200-1","로그아웃 되었습니다.");
     }
 
+
+    @Operation(summary = "내 정보 조회")
     @GetMapping("/me")
     public RsData<MemberDto> me() {
 
