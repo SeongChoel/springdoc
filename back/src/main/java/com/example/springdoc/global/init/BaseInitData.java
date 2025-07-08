@@ -1,4 +1,4 @@
-package com.example.springdoc.global;
+package com.example.springdoc.global.init;
 
 import com.example.springdoc.domain.member.member.entity.Member;
 import com.example.springdoc.domain.member.member.service.MemberService;
